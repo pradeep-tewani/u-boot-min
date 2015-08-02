@@ -309,7 +309,7 @@ config TARGET_PENGWYN
 config TARGET_AM335X_EVM
 	bool "Support am335x_evm"
 
-config TARGET_AM335X_SYSPLAY
+config TARGET_SYSPLAY
 	bool "Support am335x_sysplay"
 
 config TARGET_AM43XX_EVM
@@ -529,6 +529,6 @@ config ARCH_UNIPHIER
 
 endchoice
 
-source "board/ti/am335x/Kconfig"
+source "board/sysplay/am335x/Kconfig"
 
 endmenu
