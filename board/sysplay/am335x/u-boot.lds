@@ -36,7 +36,7 @@ SECTIONS
 		*(.__image_copy_start)
 		*(.vectors)
 		CPUDIR/start.o (.text*)
-		board/ti/am335x/built-in.o (.text*)
+		board/sysplay/am335x/built-in.o (.text*)
 		*(.text*)
 	}
 

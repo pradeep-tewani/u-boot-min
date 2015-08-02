@@ -618,7 +618,7 @@ libs-y += drivers/i2c/
 libs-y += drivers/mmc/
 libs-y += drivers/net/
 libs-y += drivers/net/phy/
-libs-y += drivers/spi/
+#libs-y += drivers/spi/
 libs-y += drivers/serial/
 libs-y += drivers/rtc/
 libs-y += drivers/power/ \
@@ -628,8 +628,8 @@ libs-y += drivers/power/ \
 	drivers/power/battery/
 
 libs-y += common/
-libs-y += test/
-libs-y += test/dm/
+#libs-y += test/
+#libs-y += test/dm/
 libs-y += lib/libfdt/ 
 
 ifneq (,$(filter $(SOC), mx25 mx27 mx5 mx6 mx31 mx35 mxs vf610))
@@ -643,7 +643,7 @@ libs-y += $(if $(BOARDDIR),board/$(BOARDDIR)/)
 
 libs-y := $(sort $(libs-y))
 
-u-boot-dirs	:= $(patsubst %/,%,$(filter %/, $(libs-y))) tools examples
+u-boot-dirs	:= $(patsubst %/,%,$(filter %/, $(libs-y))) tools
 
 u-boot-alldirs	:= $(sort $(u-boot-dirs) $(patsubst %/,%,$(filter %/, $(libs-))))
 
