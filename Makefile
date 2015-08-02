@@ -618,18 +618,12 @@ libs-y += drivers/i2c/
 libs-y += drivers/mmc/
 libs-y += drivers/net/
 libs-y += drivers/net/phy/
-#libs-y += drivers/spi/
 libs-y += drivers/serial/
 libs-y += drivers/rtc/
 libs-y += drivers/power/ \
-	drivers/power/fuel_gauge/ \
-	drivers/power/mfd/ \
-	drivers/power/pmic/ \
-	drivers/power/battery/
+	drivers/power/pmic/
 
 libs-y += common/
-#libs-y += test/
-#libs-y += test/dm/
 libs-y += lib/libfdt/ 
 
 ifneq (,$(filter $(SOC), mx25 mx27 mx5 mx6 mx31 mx35 mxs vf610))
