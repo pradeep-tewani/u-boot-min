@@ -27,19 +27,6 @@
 #define CONFIG_SYS_NS16550_REG_SIZE	(-4)
 #define CONFIG_SYS_NS16550_CLK		48000000
 
-/* Network defines. */
-#define CONFIG_CMD_NET			/* 'bootp' and 'tftp' */
-#define CONFIG_CMD_DHCP
-#define CONFIG_CMD_MII
-#define CONFIG_BOOTP_DNS		/* Configurable parts of CMD_DHCP */
-#define CONFIG_BOOTP_DNS2
-#define CONFIG_BOOTP_SEND_HOSTNAME
-#define CONFIG_BOOTP_GATEWAY
-#define CONFIG_BOOTP_SUBNETMASK
-#define CONFIG_NET_RETRY_COUNT         10
-#define CONFIG_CMD_PING
-#define CONFIG_DRIVER_TI_CPSW		/* Driver for IP block */
-#define CONFIG_MII			/* Required in net/eth.c */
 
 /*
  * RTC related defines. To use bootcount you must set bootlimit in the
@@ -84,9 +71,6 @@
 #define CONFIG_BOARD_EARLY_INIT_F
 #endif
 
-#ifdef CONFIG_NAND
-#define CONFIG_SPL_NAND_AM33XX_BCH	/* ELM support */
-#endif
 
 /* Now bring in the rest of the common code. */
 #include <configs/ti_armv7_common.h>

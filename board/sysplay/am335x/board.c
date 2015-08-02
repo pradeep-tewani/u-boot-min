@@ -273,7 +273,7 @@ void sdram_init(void)
 	config_ddr(400, &ioregs_bonelt,
 			&ddr3_beagleblack_data,
 			&ddr3_beagleblack_cmd_ctrl_data,
-					&ddr3_beagleblack_emif_reg_data, 0);
+			&ddr3_beagleblack_emif_reg_data, 0);
 }
 #endif
 
