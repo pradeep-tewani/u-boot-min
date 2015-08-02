@@ -134,14 +134,6 @@ static struct module_pin_mux gpio0_7_pin_mux[] = {
 	{-1},
 };
 
-static struct module_pin_mux gpio_led_pin_mux[] = {
-	{OFFSET(gpmc_a5), (MODE(7) | PULLUDDIS)},	/* GPI1_21 */
-	{OFFSET(gpmc_a6), (MODE(7) | PULLUDDIS)},	/* GPI1_22 */
-	{OFFSET(gpmc_a7), (MODE(7) | PULLUDDIS)},	/* GPI1_23 */
-	{OFFSET(gpmc_a8), (MODE(7) | PULLUDDIS)},	/* GPI1_24 */
-	{-1},
-};
-
 static struct module_pin_mux rgmii1_pin_mux[] = {
 	{OFFSET(mii1_txen), MODE(2)},			/* RGMII1_TCTL */
 	{OFFSET(mii1_rxdv), MODE(2) | RXACTIVE},	/* RGMII1_RCTL */
@@ -285,104 +277,19 @@ void enable_i2c0_pin_mux(void)
 {
 	configure_module_pin_mux(i2c0_pin_mux);
 }
-#if 0
-void enable_gpio_leds_mux(void)
-{
-	configure_module_pin_mux(gpio_led_pin_mux);
-}
-#endif
 
-/*
- * The AM335x GP EVM, if daughter card(s) are connected, can have 8
- * different profiles.  These profiles determine what peripherals are
- * valid and need pinmux to be configured.
- */
-#define PROFILE_NONE	0x0
-#define PROFILE_0	(1 << 0)
-#define PROFILE_1	(1 << 1)
-#define PROFILE_2	(1 << 2)
-#define PROFILE_3	(1 << 3)
-#define PROFILE_4	(1 << 4)
-#define PROFILE_5	(1 << 5)
-#define PROFILE_6	(1 << 6)
-#define PROFILE_7	(1 << 7)
-#define PROFILE_MASK	0x7
-#define PROFILE_ALL	0xFF
-
-/* CPLD registers */
-#define I2C_CPLD_ADDR	0x35
-#define CFG_REG		0x10
-
-static unsigned short detect_daughter_board_profile(void)
-{
-	unsigned short val;
-
-	if (i2c_probe(I2C_CPLD_ADDR))
-		return PROFILE_NONE;
-
-	if (i2c_read(I2C_CPLD_ADDR, CFG_REG, 1, (unsigned char *)(&val), 2))
-		return PROFILE_NONE;
-
-	return (1 << (val & PROFILE_MASK));
-}
-
-void enable_board_pin_mux(struct am335x_baseboard_id *header)
+void enable_board_pin_mux()
 {
 	/* Do board-specific muxes. */
-	if (board_is_bone(header)) {
-		/* Beaglebone pinmux */
-		configure_module_pin_mux(i2c1_pin_mux);
-		configure_module_pin_mux(mii1_pin_mux);
-		configure_module_pin_mux(mmc0_pin_mux);
+	/* Beaglebone LT pinmux */
+	configure_module_pin_mux(i2c1_pin_mux);
+	configure_module_pin_mux(mii1_pin_mux);
+	configure_module_pin_mux(mmc0_pin_mux);
 #if defined(CONFIG_NAND)
-		configure_module_pin_mux(nand_pin_mux);
+	configure_module_pin_mux(nand_pin_mux);
 #elif defined(CONFIG_NOR)
-		configure_module_pin_mux(bone_norcape_pin_mux);
+	configure_module_pin_mux(bone_norcape_pin_mux);
 #else
-		configure_module_pin_mux(mmc1_pin_mux);
+	configure_module_pin_mux(mmc1_pin_mux);
 #endif
-	} else if (board_is_gp_evm(header)) {
-		/* General Purpose EVM */
-		unsigned short profile = detect_daughter_board_profile();
-		configure_module_pin_mux(rgmii1_pin_mux);
-		configure_module_pin_mux(mmc0_pin_mux);
-		/* In profile #2 i2c1 and spi0 conflict. */
-		if (profile & ~PROFILE_2)
-			configure_module_pin_mux(i2c1_pin_mux);
-		/* Profiles 2 & 3 don't have NAND */
-#ifdef CONFIG_NAND
-		if (profile & ~(PROFILE_2 | PROFILE_3))
-			configure_module_pin_mux(nand_pin_mux);
-#endif
-		else if (profile == PROFILE_2) {
-			configure_module_pin_mux(mmc1_pin_mux);
-			configure_module_pin_mux(spi0_pin_mux);
-		}
-	} else if (board_is_idk(header)) {
-		/* Industrial Motor Control (IDK) */
-		configure_module_pin_mux(mii1_pin_mux);
-		configure_module_pin_mux(mmc0_no_cd_pin_mux);
-	} else if (board_is_evm_sk(header)) {
-		/* Starter Kit EVM */
-		configure_module_pin_mux(i2c1_pin_mux);
-		configure_module_pin_mux(gpio0_7_pin_mux);
-		configure_module_pin_mux(rgmii1_pin_mux);
-		configure_module_pin_mux(mmc0_pin_mux_sk_evm);
-	} else if (board_is_bone_lt(header)) {
-		/* Beaglebone LT pinmux */
-		configure_module_pin_mux(i2c1_pin_mux);
-		configure_module_pin_mux(gpio_led_pin_mux);
-		configure_module_pin_mux(mii1_pin_mux);
-		configure_module_pin_mux(mmc0_pin_mux);
-#if defined(CONFIG_NAND)
-		configure_module_pin_mux(nand_pin_mux);
-#elif defined(CONFIG_NOR)
-		configure_module_pin_mux(bone_norcape_pin_mux);
-#else
-		configure_module_pin_mux(mmc1_pin_mux);
-#endif
-	} else {
-		puts("Unknown board, cannot configure pinmux.");
-		hang();
-	}
 }

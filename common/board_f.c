@@ -1029,8 +1029,6 @@ void board_init_f(ulong boot_flags)
 
 	if (initcall_run_list(init_sequence_f))
 		hang();
-	printf("Reached in common/board_f.c\n");
-
 #if !defined(CONFIG_ARM) && !defined(CONFIG_SANDBOX)
 	/* NOTREACHED - jump_to_copy() does not return */
 	hang();

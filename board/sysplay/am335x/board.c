@@ -217,7 +217,6 @@ const struct dpll_params *get_dpll_ddr_params(void)
 	struct am335x_baseboard_id header;
 
 	enable_i2c0_pin_mux();
-	puts("Initializing I2C\n");
 	i2c_init(CONFIG_SYS_OMAP24_I2C_SPEED, CONFIG_SYS_OMAP24_I2C_SLAVE);
 	if (read_eeprom(&header) < 0)
 		puts("Could not get board ID.\n");
@@ -243,12 +242,7 @@ const struct dpll_params *get_dpll_ddr_params(void)
 
 	void set_mux_conf_regs(void)
 	{
-		__maybe_unused struct am335x_baseboard_id header;
-
-		if (read_eeprom(&header) < 0)
-			puts("Could not get board ID.\n");
-
-		enable_board_pin_mux(&header);
+		enable_board_pin_mux();
 	}
 	const struct ctrl_ioregs ioregs_bonelt = {
 		.cm0ioctl		= MT41K256M16HA125E_IOCTRL_VALUE,

@@ -258,7 +258,6 @@ void i2c_init_all(void)
  */
 unsigned int i2c_get_bus_num(void)
 {
-	printf("Bus No. is %d\n", gd->cur_i2c_bus);
 	return gd->cur_i2c_bus;
 }
 
@@ -279,7 +278,6 @@ unsigned int i2c_get_bus_num(void)
 int i2c_set_bus_num(unsigned int bus)
 {
 	int max;
-	printf("I2s set bus num called\n");
 
 	if ((bus == I2C_BUS) && (I2C_ADAP->init_done > 0))
 		return 0;
@@ -399,7 +397,6 @@ void i2c_reg_write(uint8_t addr, uint8_t reg, uint8_t val)
 
 void __i2c_init(int speed, int slaveaddr)
 {
-	puts("Initializing I2C 2\n");
 	i2c_init_bus(i2c_get_bus_num(), speed, slaveaddr);
 }
 void i2c_init(int speed, int slaveaddr)
