@@ -98,28 +98,6 @@ static struct module_pin_mux i2c1_pin_mux[] = {
 	{-1},
 };
 
-
-
-static struct module_pin_mux mii1_pin_mux[] = {
-	{OFFSET(mii1_rxerr), MODE(0) | RXACTIVE},	/* MII1_RXERR */
-	{OFFSET(mii1_txen), MODE(0)},			/* MII1_TXEN */
-	{OFFSET(mii1_rxdv), MODE(0) | RXACTIVE},	/* MII1_RXDV */
-	{OFFSET(mii1_txd3), MODE(0)},			/* MII1_TXD3 */
-	{OFFSET(mii1_txd2), MODE(0)},			/* MII1_TXD2 */
-	{OFFSET(mii1_txd1), MODE(0)},			/* MII1_TXD1 */
-	{OFFSET(mii1_txd0), MODE(0)},			/* MII1_TXD0 */
-	{OFFSET(mii1_txclk), MODE(0) | RXACTIVE},	/* MII1_TXCLK */
-	{OFFSET(mii1_rxclk), MODE(0) | RXACTIVE},	/* MII1_RXCLK */
-	{OFFSET(mii1_rxd3), MODE(0) | RXACTIVE},	/* MII1_RXD3 */
-	{OFFSET(mii1_rxd2), MODE(0) | RXACTIVE},	/* MII1_RXD2 */
-	{OFFSET(mii1_rxd1), MODE(0) | RXACTIVE},	/* MII1_RXD1 */
-	{OFFSET(mii1_rxd0), MODE(0) | RXACTIVE},	/* MII1_RXD0 */
-	{OFFSET(mdio_data), MODE(0) | RXACTIVE | PULLUP_EN}, /* MDIO_DATA */
-	{OFFSET(mdio_clk), MODE(0) | PULLUP_EN},	/* MDIO_CLK */
-	{-1},
-};
-
-
 void enable_uart0_pin_mux(void)
 {
 	configure_module_pin_mux(uart0_pin_mux);
@@ -160,7 +138,6 @@ void enable_board_pin_mux()
 	/* Do board-specific muxes. */
 	/* Beaglebone LT pinmux */
 	configure_module_pin_mux(i2c1_pin_mux);
-	configure_module_pin_mux(mii1_pin_mux);
 	configure_module_pin_mux(mmc0_pin_mux);
 	configure_module_pin_mux(mmc1_pin_mux);
 }
