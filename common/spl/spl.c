@@ -139,101 +139,15 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 			CONFIG_SYS_SPL_MALLOC_SIZE);
 #endif
 
-#ifndef CONFIG_PPC
 	/*
 	 * timer_init() does not exist on PPC systems. The timer is initialized
 	 * and enabled (decrementer) in interrupt_init() here.
 	 */
 	timer_init();
-#endif
-	//blink_led();
 
-#ifdef CONFIG_SPL_BOARD_INIT
-	spl_board_init();
-#endif
-
-	boot_device = spl_boot_device();
-	debug("boot device - %d\n", boot_device);
-	switch (boot_device) {
-#ifdef CONFIG_SPL_RAM_DEVICE
-	case BOOT_DEVICE_RAM:
-		spl_ram_load_image();
-		break;
-#endif
-#ifdef CONFIG_SPL_MMC_SUPPORT
-	case BOOT_DEVICE_MMC1:
-	case BOOT_DEVICE_MMC2:
-	case BOOT_DEVICE_MMC2_2:
-		spl_mmc_load_image();
-		break;
-#endif
-#ifdef CONFIG_SPL_NAND_SUPPORT
-	case BOOT_DEVICE_NAND:
-		spl_nand_load_image();
-		break;
-#endif
-#ifdef CONFIG_SPL_ONENAND_SUPPORT
-	case BOOT_DEVICE_ONENAND:
-		spl_onenand_load_image();
-		break;
-#endif
-#ifdef CONFIG_SPL_NOR_SUPPORT
-	case BOOT_DEVICE_NOR:
-		spl_nor_load_image();
-		break;
-#endif
 #ifdef CONFIG_SPL_YMODEM_SUPPORT
-	case BOOT_DEVICE_UART:
-		spl_ymodem_load_image();
-		break;
+	spl_ymodem_load_image();
 #endif
-#ifdef CONFIG_SPL_SPI_SUPPORT
-	case BOOT_DEVICE_SPI:
-		spl_spi_load_image();
-		break;
-#endif
-#ifdef CONFIG_SPL_ETH_SUPPORT
-	case BOOT_DEVICE_CPGMAC:
-#ifdef CONFIG_SPL_ETH_DEVICE
-		spl_net_load_image(CONFIG_SPL_ETH_DEVICE);
-#else
-		spl_net_load_image(NULL);
-#endif
-		break;
-#endif
-#ifdef CONFIG_SPL_USBETH_SUPPORT
-	case BOOT_DEVICE_USBETH:
-		spl_net_load_image("usb_ether");
-		break;
-#endif
-#ifdef CONFIG_SPL_USB_SUPPORT
-	case BOOT_DEVICE_USB:
-		spl_usb_load_image();
-		break;
-#endif
-#ifdef CONFIG_SPL_SATA_SUPPORT
-	case BOOT_DEVICE_SATA:
-		spl_sata_load_image();
-		break;
-#endif
-	default:
-		debug("SPL: Un-supported Boot Device\n");
-		hang();
-	}
-
-	switch (spl_image.os) {
-	case IH_OS_U_BOOT:
-		debug("Jumping to U-Boot\n");
-		break;
-#ifdef CONFIG_SPL_OS_BOOT
-	case IH_OS_LINUX:
-		debug("Jumping to Linux\n");
-		spl_board_prepare_for_linux();
-		jump_to_image_linux((void *)CONFIG_SYS_SPL_ARGS_ADDR);
-#endif
-	default:
-		debug("Unsupported OS image.. Jumping nevertheless..\n");
-	}
 	jump_to_image_no_args(&spl_image);
 }
 

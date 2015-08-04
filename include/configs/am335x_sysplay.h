@@ -22,10 +22,6 @@
 # define CONFIG_FIT
 # define CONFIG_TIMESTAMP
 # define CONFIG_LZO
-# ifdef CONFIG_ENABLE_VBOOT
-#  define CONFIG_FIT_SIGNATURE
-#  define CONFIG_RSA
-# endif
 #endif
 
 #define CONFIG_SYS_BOOTM_LEN		(16 << 20)
@@ -43,13 +39,6 @@
 
 /* Always 128 KiB env size */
 #define CONFIG_ENV_SIZE			(128 << 10)
-
-/* Enhance our eMMC support / experience. */
-#define CONFIG_CMD_GPT
-#define CONFIG_EFI_PARTITION
-#define CONFIG_PARTITION_UUIDS
-#define CONFIG_CMD_PART
-
 
 #define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
 

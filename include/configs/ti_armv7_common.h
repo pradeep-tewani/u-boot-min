@@ -90,33 +90,9 @@
 #define CONFIG_SYS_OMAP24_I2C_SLAVE	1
 #define CONFIG_SYS_I2C_OMAP24XX
 
-/* MMC/SD IP block */
-#define CONFIG_MMC
-#define CONFIG_GENERIC_MMC
-#define CONFIG_OMAP_HSMMC
-#define CONFIG_CMD_MMC
-
-/* McSPI IP block */
-#define CONFIG_SPI
-#define CONFIG_OMAP3_SPI
-#define CONFIG_CMD_SPI
-
 /* GPIO block */
 #define CONFIG_OMAP_GPIO
 #define CONFIG_CMD_GPIO
-
-/*
- * GPMC NAND block.  We support 1 device and the physical address to
- * access CS0 at is 0x8000000.
- */
-#ifdef CONFIG_NAND
-#define CONFIG_NAND_OMAP_GPMC
-#ifndef CONFIG_SYS_NAND_BASE
-#define CONFIG_SYS_NAND_BASE		0x8000000
-#endif
-#define CONFIG_SYS_MAX_NAND_DEVICE	1
-#define CONFIG_CMD_NAND
-#endif
 
 /*
  * The following are general good-enough settings for U-Boot.  We set a
@@ -153,16 +129,6 @@
 #define CONFIG_SYS_BARGSIZE		CONFIG_SYS_CBSIZE
 
 /*
- * When we have SPI, NOR or NAND flash we expect to be making use of
- * mtdparts, both for ease of use in U-Boot and for passing information
- * on to the Linux kernel.
- */
-#if defined(CONFIG_SPI_BOOT) || defined(CONFIG_NOR) || defined(CONFIG_NAND)
-#define CONFIG_MTD_DEVICE		/* Required for mtdparts */
-#define CONFIG_CMD_MTDPARTS
-#endif
-
-/*
  * For commands to use, we take the default list and add a few other
  * useful commands.  Note that we must have set CONFIG_SYS_NO_FLASH
  * prior to this include, in order to skip a few commands.  When we do
@@ -174,19 +140,6 @@
 #define CONFIG_CMD_ASKENV
 #define CONFIG_CMD_ECHO
 #define CONFIG_CMD_BOOTZ
-
-/*
- * Common filesystems support.  When we have removable storage we
- * enabled a number of useful commands and support.
- */
-#if defined(CONFIG_MMC) || defined(CONFIG_USB_STORAGE)
-#define CONFIG_DOS_PARTITION
-#define CONFIG_CMD_FAT
-#define CONFIG_FAT_WRITE
-#define CONFIG_CMD_EXT2
-#define CONFIG_CMD_EXT4
-#define CONFIG_CMD_FS_GENERIC
-#endif
 
 /*
  * Our platforms make use of SPL to initalize the hardware (primarily
@@ -226,34 +179,6 @@
 #define CONFIG_SYS_SPL_MALLOC_SIZE	CONFIG_SYS_MALLOC_LEN
 #endif
 
-/* RAW SD card / eMMC locations. */
-#define CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR	0x300 /* address 0x60000 */
-#define CONFIG_SYS_U_BOOT_MAX_SIZE_SECTORS	0x200 /* 256 KB */
-
-/* FAT sd card locations. */
-#define CONFIG_SYS_MMC_SD_FAT_BOOT_PARTITION	1
-#define CONFIG_SPL_FAT_LOAD_PAYLOAD_NAME	"u-boot.img"
-
-#ifdef CONFIG_SPL_OS_BOOT
-/* FAT */
-#define CONFIG_SPL_FAT_LOAD_KERNEL_NAME		"uImage"
-#define CONFIG_SPL_FAT_LOAD_ARGS_NAME		"args"
-
-/* RAW SD card / eMMC */
-#define CONFIG_SYS_MMCSD_RAW_MODE_KERNEL_SECTOR	0x900	/* address 0x120000 */
-#define CONFIG_SYS_MMCSD_RAW_MODE_ARGS_SECTOR	0x80	/* address 0x10000 */
-#define CONFIG_SYS_MMCSD_RAW_MODE_ARGS_SECTORS	0x80	/* 64KiB */
-
-/* spl export command */
-#define CONFIG_CMD_SPL
-#endif
-
-#ifdef CONFIG_MMC
-#define CONFIG_SPL_LIBDISK_SUPPORT
-#define CONFIG_SPL_MMC_SUPPORT
-#define CONFIG_SPL_FAT_SUPPORT
-#endif
-
 /* General parts of the framework, required. */
 #define CONFIG_SPL_I2C_SUPPORT
 #define CONFIG_SPL_LIBCOMMON_SUPPORT
@@ -262,14 +187,6 @@
 #define CONFIG_SPL_GPIO_SUPPORT
 #define CONFIG_SPL_BOARD_INIT
 
-#ifdef CONFIG_NAND
-#define CONFIG_SPL_NAND_SUPPORT
-#define CONFIG_SPL_NAND_BASE
-#define CONFIG_SPL_NAND_DRIVERS
-#define CONFIG_SPL_NAND_ECC
-#define CONFIG_SPL_MTD_SUPPORT
-#define CONFIG_SYS_NAND_U_BOOT_START	CONFIG_SYS_TEXT_BASE
-#endif
 #endif /* !CONFIG_NOR_BOOT */
 
 #endif	/* __CONFIG_TI_ARMV7_COMMON_H__ */
