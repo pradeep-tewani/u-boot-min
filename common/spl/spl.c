@@ -166,7 +166,4 @@ void preloader_console_init(void)
 
 	puts("\nU-Boot SPL " PLAIN_VERSION " (" U_BOOT_DATE " - " \
 			U_BOOT_TIME ")\n");
-#ifdef CONFIG_SPL_DISPLAY_PRINT
-	spl_display_print();
-#endif
 }

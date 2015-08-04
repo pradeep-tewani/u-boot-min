@@ -248,19 +248,6 @@ init_fnc_t init_sequence_r[] = {
 
 void board_init_r(gd_t *new_gd, ulong dest_addr)
 {
-#ifdef CONFIG_NEEDS_MANUAL_RELOC
-	int i;
-#endif
-
-#if !defined(CONFIG_X86) && !defined(CONFIG_ARM) && !defined(CONFIG_ARM64)
-	gd = new_gd;
-#endif
-
-#ifdef CONFIG_NEEDS_MANUAL_RELOC
-	for (i = 0; i < ARRAY_SIZE(init_sequence_r); i++)
-		init_sequence_r[i] += gd->reloc_off;
-#endif
-
 	if (initcall_run_list(init_sequence_r))
 		hang();
 
