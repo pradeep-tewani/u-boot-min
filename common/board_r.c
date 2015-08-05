@@ -237,12 +237,8 @@ init_fnc_t init_sequence_r[] = {
 	console_init_r,		/* fully init console as a device */
 	INIT_FUNC_WATCHDOG_RESET
 	interrupt_init,
-#if defined(CONFIG_ARM) || defined(CONFIG_x86)
 	initr_enable_interrupts,
-#endif
-#ifdef CONFIG_BOARD_LATE_INIT
-	board_late_init,
-#endif
+
 	run_main_loop,
 };
 

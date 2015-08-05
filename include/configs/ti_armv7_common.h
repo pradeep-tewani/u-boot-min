@@ -82,14 +82,6 @@
 /* Timer information. */
 #define CONFIG_SYS_PTV			2	/* Divisor: 2^(PTV+1) => 8 */
 
-/* I2C IP block */
-#define CONFIG_I2C
-#define CONFIG_CMD_I2C
-#define CONFIG_SYS_I2C
-#define CONFIG_SYS_OMAP24_I2C_SPEED	100000
-#define CONFIG_SYS_OMAP24_I2C_SLAVE	1
-#define CONFIG_SYS_I2C_OMAP24XX
-
 /* GPIO block */
 #define CONFIG_OMAP_GPIO
 #define CONFIG_CMD_GPIO
@@ -180,7 +172,6 @@
 #endif
 
 /* General parts of the framework, required. */
-#define CONFIG_SPL_I2C_SUPPORT
 #define CONFIG_SPL_LIBCOMMON_SUPPORT
 #define CONFIG_SPL_LIBGENERIC_SUPPORT
 #define CONFIG_SPL_SERIAL_SUPPORT

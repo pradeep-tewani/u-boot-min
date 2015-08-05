@@ -611,12 +611,8 @@ libs-$(CONFIG_OF_EMBED) += dts/
 libs-y += arch/$(ARCH)/lib/
 libs-y += drivers/
 libs-y += drivers/gpio/
-libs-y += drivers/i2c/
 libs-y += drivers/serial/
 libs-y += drivers/rtc/
-libs-y += drivers/power/ \
-	drivers/power/pmic/
-
 libs-y += common/
 libs-y += lib/libfdt/ 
 

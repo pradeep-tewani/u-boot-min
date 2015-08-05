@@ -40,48 +40,6 @@ DECLARE_GLOBAL_DATA_PTR;
 
 //static struct ctrl_dev *cdev = (struct ctrl_dev *)CTRL_DEVICE_BASE;
 
-/*
- * Read header information from EEPROM into global structure.
- */
-static int read_eeprom(struct am335x_baseboard_id *header)
-{
-	/* Check if baseboard eeprom is available */
-	if (i2c_probe(CONFIG_SYS_I2C_EEPROM_ADDR)) {
-		puts("Could not probe the EEPROM; something fundamentally "
-			"wrong on the I2C bus.\n");
-		return -ENODEV;
-	}
-
-	/* read the eeprom using i2c */
-	if (i2c_read(CONFIG_SYS_I2C_EEPROM_ADDR, 0, 2, (uchar *)header,
-		     sizeof(struct am335x_baseboard_id))) {
-		puts("Could not read the EEPROM; something fundamentally"
-			" wrong on the I2C bus.\n");
-		return -EIO;
-	}
-
-	if (header->magic != 0xEE3355AA) {
-		/*
-		 * read the eeprom using i2c again,
-		 * but use only a 1 byte address
-		 */
-		if (i2c_read(CONFIG_SYS_I2C_EEPROM_ADDR, 0, 1, (uchar *)header,
-			     sizeof(struct am335x_baseboard_id))) {
-			puts("Could not read the EEPROM; something "
-				"fundamentally wrong on the I2C bus.\n");
-			return -EIO;
-		}
-
-		if (header->magic != 0xEE3355AA) {
-			printf("Incorrect magic number (0x%x) in EEPROM\n",
-					header->magic);
-			return -EINVAL;
-		}
-	}
-
-	return 0;
-}
-
 int do_userbutton (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	int button = 0;
@@ -137,89 +95,18 @@ const struct dpll_params dpll_ddr_bone_black = {
 
 void am33xx_spl_board_init(void)
 {
-	struct am335x_baseboard_id header;
-	int mpu_vdd;
-
-	if (read_eeprom(&header) < 0)
-		puts("Could not get board ID.\n");
-
-	/* Get the frequency */
-
-	/* BeagleBone PMIC Code */
-	int usb_cur_lim;
-
-	if (i2c_probe(TPS65217_CHIP_PM))
-		return;
-
 	/*
 	 * Override what we have detected since we know if we have
 	 * a Beaglebone Black it supports 1GHz.
 	 */
 	dpll_mpu_opp100.m = MPUPLL_M_1000;
 
-	/*
-	 * Increase USB current limit to 1300mA or 1800mA and set
-	 * the MPU voltage controller as needed.
-	 */
-	if (dpll_mpu_opp100.m == MPUPLL_M_1000) {
-		usb_cur_lim = TPS65217_USB_INPUT_CUR_LIMIT_1800MA;
-		mpu_vdd = TPS65217_DCDC_VOLT_SEL_1325MV;
-	} else {
-		usb_cur_lim = TPS65217_USB_INPUT_CUR_LIMIT_1300MA;
-		mpu_vdd = TPS65217_DCDC_VOLT_SEL_1275MV;
-	}
-#if 1
-
-	if (tps65217_reg_write(TPS65217_PROT_LEVEL_NONE,
-				TPS65217_POWER_PATH,
-				usb_cur_lim,
-				TPS65217_USB_INPUT_CUR_LIMIT_MASK))
-		puts("tps65217_reg_write failure\n");
-
-	/* Set DCDC3 (CORE) voltage to 1.125V */
-	if (tps65217_voltage_update(TPS65217_DEFDCDC3,
-				TPS65217_DCDC_VOLT_SEL_1125MV)) {
-		puts("tps65217_voltage_update failure\n");
-		return;
-	}
-#endif
-
-	/* Set CORE Frequencies to OPP100 */
-	do_setup_dpll(&dpll_core_regs, &dpll_core_opp100);
-
-	/* Set DCDC2 (MPU) voltage */
-	if (tps65217_voltage_update(TPS65217_DEFDCDC2, mpu_vdd)) {
-		puts("tps65217_voltage_update failure\n");
-		return;
-	}
-
-	/*
-	 * Set LDO3, LDO4 output voltage to 3.3V for Beaglebone.
-	 * Set LDO3 to 1.8V and LDO4 to 3.3V for Beaglebone Black.
-	 */
-	if (tps65217_reg_write(TPS65217_PROT_LEVEL_2,
-				TPS65217_DEFLS1,
-				TPS65217_LDO_VOLTAGE_OUT_1_8,
-				TPS65217_LDO_MASK))
-		puts("tps65217_reg_write failure\n");
-
-	if (tps65217_reg_write(TPS65217_PROT_LEVEL_2,
-				TPS65217_DEFLS2,
-				TPS65217_LDO_VOLTAGE_OUT_3_3,
-				TPS65217_LDO_MASK))
-		puts("tps65217_reg_write failure\n");
 	/* Set MPU Frequency to what we detected now that voltages are set */
 	do_setup_dpll(&dpll_mpu_regs, &dpll_mpu_opp100);
 }
 
 const struct dpll_params *get_dpll_ddr_params(void)
 {
-	struct am335x_baseboard_id header;
-
-	enable_i2c0_pin_mux();
-	i2c_init(CONFIG_SYS_OMAP24_I2C_SPEED, CONFIG_SYS_OMAP24_I2C_SLAVE);
-	if (read_eeprom(&header) < 0)
-		puts("Could not get board ID.\n");
 	return &dpll_ddr_bone_black;
 }
 
@@ -289,27 +176,3 @@ int board_init(void)
 	gd->bd->bi_boot_params = CONFIG_SYS_SDRAM_BASE + 0x100;
 	return 0;
 }
-
-#ifdef CONFIG_BOARD_LATE_INIT
-int board_late_init(void)
-{
-#ifdef CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
-	char safe_string[HDR_NAME_LEN + 1];
-	struct am335x_baseboard_id header;
-
-	if (read_eeprom(&header) < 0)
-		puts("Could not get board ID.\n");
-
-	/* Now set variables based on the header. */
-	strncpy(safe_string, (char *)header.name, sizeof(header.name));
-	safe_string[sizeof(header.name)] = 0;
-	setenv("board_name", safe_string);
-
-	strncpy(safe_string, (char *)header.version, sizeof(header.version));
-	safe_string[sizeof(header.version)] = 0;
-	setenv("board_rev", safe_string);
-#endif
-
-	return 0;
-}
-#endif
