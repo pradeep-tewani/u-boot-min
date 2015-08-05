@@ -609,14 +609,9 @@ libs-y += $(CPUDIR)/$(SOC)/
 endif
 libs-$(CONFIG_OF_EMBED) += dts/
 libs-y += arch/$(ARCH)/lib/
-libs-y += fs/
-libs-y += net/
-libs-y += disk/
 libs-y += drivers/
 libs-y += drivers/gpio/
 libs-y += drivers/i2c/
-libs-y += drivers/net/
-libs-y += drivers/net/phy/
 libs-y += drivers/serial/
 libs-y += drivers/rtc/
 libs-y += drivers/power/ \
@@ -1212,7 +1207,7 @@ clean: rm-files := $(CLEAN_FILES)
 
 clean-dirs	:= $(foreach f,$(u-boot-alldirs),$(if $(wildcard $(srctree)/$f/Makefile),$f))
 
-clean-dirs      := $(addprefix _clean_, $(clean-dirs) doc/DocBook)
+clean-dirs      := $(addprefix _clean_, $(clean-dirs))
 
 PHONY += $(clean-dirs) clean archclean
 $(clean-dirs):

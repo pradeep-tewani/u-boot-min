@@ -38,7 +38,7 @@ DECLARE_GLOBAL_DATA_PTR;
 /* GPIO that controls power to DDR on EVM-SK */
 #define GPIO_DDR_VTT_EN		7
 
-static struct ctrl_dev *cdev = (struct ctrl_dev *)CTRL_DEVICE_BASE;
+//static struct ctrl_dev *cdev = (struct ctrl_dev *)CTRL_DEVICE_BASE;
 
 /*
  * Read header information from EEPROM into global structure.
@@ -82,7 +82,7 @@ static int read_eeprom(struct am335x_baseboard_id *header)
 	return 0;
 }
 
-int do_userbutton (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
+int do_userbutton (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
 	int button = 0;
 	gpio_direction_input(72);
@@ -91,7 +91,7 @@ int do_userbutton (cmd_tbl_t *cmdtp, int flag, int argc, char *argv[])
 }
 
 U_BOOT_CMD(
-	userbutton, CONFIG_SYS_MAXARGS, 1,      do_userbutton,
+	userbutton, CONFIG_SYS_MAXARGS, 1, do_userbutton,
 	"Return the status of the BeagleBoard USER button",
 	""
 );

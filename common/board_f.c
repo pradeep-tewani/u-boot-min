@@ -114,7 +114,7 @@ static int init_func_watchdog_init(void)
 	defined(CONFIG_SH))
 	hw_watchdog_init();
 # endif
-	puts("       Watchdog enabled\n");
+	puts("Watchdog enabled\n");
 	WATCHDOG_RESET();
 
 	return 0;
@@ -175,24 +175,6 @@ static int announce_dram_init(void)
 	return 0;
 }
 
-#if defined(CONFIG_MIPS) || defined(CONFIG_PPC)
-static int init_func_ram(void)
-{
-#ifdef	CONFIG_BOARD_TYPES
-	int board_type = gd->board_type;
-#else
-	int board_type = 0;	/* use dummy arg */
-#endif
-
-	gd->ram_size = initdram(board_type);
-
-	if (gd->ram_size > 0)
-		return 0;
-
-	puts("*** failed ***\n");
-	return 1;
-}
-#endif
 
 static int show_dram_config(void)
 {
@@ -246,15 +228,6 @@ static int init_func_i2c(void)
 }
 #endif
 
-#if defined(CONFIG_HARD_SPI)
-static int init_func_spi(void)
-{
-	puts("SPI:   ");
-	spi_init();
-	puts("ready\n");
-	return 0;
-}
-#endif
 
 __maybe_unused
 static int zero_global_data(void)
@@ -274,62 +247,6 @@ __weak int arch_cpu_init(void)
 {
 	return 0;
 }
-
-#ifdef CONFIG_OF_HOSTFILE
-
-static int read_fdt_from_file(void)
-{
-	struct sandbox_state *state = state_get_current();
-	const char *fname = state->fdt_fname;
-	void *blob;
-	ssize_t size;
-	int err;
-	int fd;
-
-	blob = map_sysmem(CONFIG_SYS_FDT_LOAD_ADDR, 0);
-	if (!state->fdt_fname) {
-		err = fdt_create_empty_tree(blob, 256);
-		if (!err)
-			goto done;
-		printf("Unable to create empty FDT: %s\n", fdt_strerror(err));
-		return -EINVAL;
-	}
-
-	size = os_get_filesize(fname);
-	if (size < 0) {
-		printf("Failed to file FDT file '%s'\n", fname);
-		return -ENOENT;
-	}
-	fd = os_open(fname, OS_O_RDONLY);
-	if (fd < 0) {
-		printf("Failed to open FDT file '%s'\n", fname);
-		return -EACCES;
-	}
-	if (os_read(fd, blob, size) != size) {
-		os_close(fd);
-		return -EIO;
-	}
-	os_close(fd);
-
-done:
-	gd->fdt_blob = blob;
-
-	return 0;
-}
-#endif
-
-#ifdef CONFIG_SANDBOX
-static int setup_ram_buf(void)
-{
-	struct sandbox_state *state = state_get_current();
-
-	gd->arch.ram_buf = state->ram_buf;
-	gd->ram_size = state->ram_size;
-
-	return 0;
-}
-#endif
-
 
 /* Get the top of usable RAM */
 __weak ulong board_get_usable_ram_top(ulong total_size)
@@ -547,95 +464,6 @@ static int display_new_sp(void)
 	return 0;
 }
 
-#ifdef CONFIG_PPC
-static int setup_board_part1(void)
-{
-	bd_t *bd = gd->bd;
-
-	/*
-	 * Save local variables to board info struct
-	 */
-
-	bd->bi_memstart = CONFIG_SYS_SDRAM_BASE;	/* start of memory */
-	bd->bi_memsize = gd->ram_size;			/* size in bytes */
-
-#ifdef CONFIG_SYS_SRAM_BASE
-	bd->bi_sramstart = CONFIG_SYS_SRAM_BASE;	/* start of SRAM */
-	bd->bi_sramsize = CONFIG_SYS_SRAM_SIZE;		/* size  of SRAM */
-#endif
-
-#if defined(CONFIG_8xx) || defined(CONFIG_MPC8260) || defined(CONFIG_5xx) || \
-		defined(CONFIG_E500) || defined(CONFIG_MPC86xx)
-	bd->bi_immr_base = CONFIG_SYS_IMMR;	/* base  of IMMR register     */
-#endif
-#if defined(CONFIG_MPC5xxx)
-	bd->bi_mbar_base = CONFIG_SYS_MBAR;	/* base of internal registers */
-#endif
-#if defined(CONFIG_MPC83xx)
-	bd->bi_immrbar = CONFIG_SYS_IMMR;
-#endif
-
-	return 0;
-}
-
-static int setup_board_part2(void)
-{
-	bd_t *bd = gd->bd;
-
-	bd->bi_intfreq = gd->cpu_clk;	/* Internal Freq, in Hz */
-	bd->bi_busfreq = gd->bus_clk;	/* Bus Freq,      in Hz */
-#if defined(CONFIG_CPM2)
-	bd->bi_cpmfreq = gd->arch.cpm_clk;
-	bd->bi_brgfreq = gd->arch.brg_clk;
-	bd->bi_sccfreq = gd->arch.scc_clk;
-	bd->bi_vco = gd->arch.vco_out;
-#endif /* CONFIG_CPM2 */
-#if defined(CONFIG_MPC512X)
-	bd->bi_ipsfreq = gd->arch.ips_clk;
-#endif /* CONFIG_MPC512X */
-#if defined(CONFIG_MPC5xxx)
-	bd->bi_ipbfreq = gd->arch.ipb_clk;
-	bd->bi_pcifreq = gd->pci_clk;
-#endif /* CONFIG_MPC5xxx */
-
-	return 0;
-}
-#endif
-
-#ifdef CONFIG_SYS_EXTBDINFO
-static int setup_board_extra(void)
-{
-	bd_t *bd = gd->bd;
-
-	strncpy((char *) bd->bi_s_version, "1.2", sizeof(bd->bi_s_version));
-	strncpy((char *) bd->bi_r_version, U_BOOT_VERSION,
-		sizeof(bd->bi_r_version));
-
-	bd->bi_procfreq = gd->cpu_clk;	/* Processor Speed, In Hz */
-	bd->bi_plb_busfreq = gd->bus_clk;
-#if defined(CONFIG_405GP) || defined(CONFIG_405EP) || \
-		defined(CONFIG_440EP) || defined(CONFIG_440GR) || \
-		defined(CONFIG_440EPX) || defined(CONFIG_440GRX)
-	bd->bi_pci_busfreq = get_PCI_freq();
-	bd->bi_opbfreq = get_OPB_freq();
-#elif defined(CONFIG_XILINX_405)
-	bd->bi_pci_busfreq = get_PCI_freq();
-#endif
-
-	return 0;
-}
-#endif
-
-#ifdef CONFIG_POST
-static int init_post(void)
-{
-	post_bootmode_init();
-	post_run(NULL, POST_ROM | post_bootmode_get(0));
-
-	return 0;
-}
-#endif
-
 static int setup_dram_config(void)
 {
 	/* Ram is board specific, so move it to board code ... */
@@ -669,35 +497,6 @@ static int setup_reloc(void)
 	return 0;
 }
 
-/* ARM calls relocate_code from its crt0.S */
-#if !defined(CONFIG_ARM) && !defined(CONFIG_SANDBOX)
-
-static int jump_to_copy(void)
-{
-	/*
-	 * x86 is special, but in a nice way. It uses a trampoline which
-	 * enables the dcache if possible.
-	 *
-	 * For now, other archs use relocate_code(), which is implemented
-	 * similarly for all archs. When we do generic relocation, hopefully
-	 * we can make all archs enable the dcache prior to relocation.
-	 */
-#ifdef CONFIG_X86
-	/*
-	 * SDRAM and console are now initialised. The final stack can now
-	 * be setup in SDRAM. Code execution will continue in Flash, but
-	 * with the stack in SDRAM and Global Data in temporary memory
-	 * (CPU cache)
-	 */
-	board_init_f_r_trampoline(gd->start_addr_sp);
-#else
-	relocate_code(gd->start_addr_sp, gd->new_gd, gd->relocaddr);
-#endif
-
-	return 0;
-}
-#endif
-
 /* Record the board_init_f() bootstage (after arch_cpu_init()) */
 static int mark_bootstage(void)
 {
@@ -706,29 +505,6 @@ static int mark_bootstage(void)
 	return 0;
 }
 
-static int initf_malloc(void)
-{
-#ifdef CONFIG_SYS_MALLOC_F_LEN
-	assert(gd->malloc_base);	/* Set up by crt0.S */
-	gd->malloc_limit = gd->malloc_base + CONFIG_SYS_MALLOC_F_LEN;
-	gd->malloc_ptr = 0;
-#endif
-
-	return 0;
-}
-
-static int initf_dm(void)
-{
-#if defined(CONFIG_DM) && defined(CONFIG_SYS_MALLOC_F_LEN)
-	int ret;
-
-	ret = dm_init_and_scan(true);
-	if (ret)
-		return ret;
-#endif
-
-	return 0;
-}
 
 static init_fnc_t init_sequence_f[] = {
 	setup_mon_len,
@@ -813,47 +589,3 @@ void board_init_f(ulong boot_flags)
 	if (initcall_run_list(init_sequence_f))
 		hang();
 }
-
-#ifdef CONFIG_X86
-/*
- * For now this code is only used on x86.
- *
- * init_sequence_f_r is the list of init functions which are run when
- * U-Boot is executing from Flash with a semi-limited 'C' environment.
- * The following limitations must be considered when implementing an
- * '_f_r' function:
- *  - 'static' variables are read-only
- *  - Global Data (gd->xxx) is read/write
- *
- * The '_f_r' sequence must, as a minimum, copy U-Boot to RAM (if
- * supported).  It _should_, if possible, copy global data to RAM and
- * initialise the CPU caches (to speed up the relocation process)
- *
- * NOTE: At present only x86 uses this route, but it is intended that
- * all archs will move to this when generic relocation is implemented.
- */
-static init_fnc_t init_sequence_f_r[] = {
-	init_cache_f_r,
-	copy_uboot_to_ram,
-	clear_bss,
-	do_elf_reloc_fixups,
-
-	NULL,
-};
-
-void board_init_f_r(void)
-{
-	if (initcall_run_list(init_sequence_f_r))
-		hang();
-
-	/*
-	 * U-Boot has been copied into SDRAM, the BSS has been cleared etc.
-	 * Transfer execution from Flash to RAM by calculating the address
-	 * of the in-RAM copy of board_init_r() and calling it
-	 */
-	(board_init_r + gd->reloc_off)(gd, gd->relocaddr);
-
-	/* NOTREACHED - board_init_r() does not return */
-	hang();
-}
-#endif /* CONFIG_X86 */
