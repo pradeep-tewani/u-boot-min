@@ -22,3 +22,6 @@ EXPORT_FUNC(simple_strtoul)
 EXPORT_FUNC(strict_strtoul)
 EXPORT_FUNC(simple_strtol)
 EXPORT_FUNC(strcmp)
+EXPORT_FUNC(i2c_write)
+EXPORT_FUNC(i2c_read)
+
