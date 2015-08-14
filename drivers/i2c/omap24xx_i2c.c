@@ -504,7 +504,7 @@ static int omap24_i2c_write(struct i2c_adapter *adap, uchar chip, uint addr,
 	/* Wait until bus not busy */
 	if (wait_for_bb(adap))
 		return 1;
-
+	printf("Alen = %d, len = %d\n", alen, len);
 	/* Start address phase - will write regoffset + len bytes data */
 	writew(alen + len, &i2c_base->cnt);
 	/* Set slave address */

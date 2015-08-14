@@ -37,11 +37,12 @@
 #define CONFIG_SYS_LDSCRIPT		"board/sysplay/am335x/u-boot.lds"
 
 /* Always 128 KiB env size */
-#define CONFIG_ENV_SIZE			(128 << 10)
+#define CONFIG_ENV_SIZE			(3 << 10)
 
 #define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
 
 #ifndef CONFIG_SPL_BUILD
+#if 0
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	DEFAULT_LINUX_BOOT_ENV \
 	"boot_fdt=try\0" \
@@ -155,6 +156,7 @@
 		"if test $fdtfile = undefined; then " \
 			"echo WARNING: Could not determine device tree to use; fi; \0"
 #endif
+#endif
 
 #define CONFIG_BOOTCOMMAND \
 	"if userbutton; then " \
@@ -189,12 +191,14 @@
 #define CONFIG_SYS_I2C_OMAP24XX
 #define CONFIG_CMD_EEPROM
 #define CONFIG_ENV_EEPROM_IS_ON_I2C
+#define CONFIG_SYS_EEPROM_PAGE_WRITE_BITS	5
 #define CONFIG_SYS_DEF_EEPROM_ADDR  0x50
 #define CONFIG_SYS_I2C_EEPROM_ADDR  0x50    /* Main EEPROM */
 #define CONFIG_SYS_I2C_EEPROM_ADDR_LEN  2
-#if 0
+#if 1
 #define CONFIG_ENV_IS_IN_EEPROM
-#define CONFIG_ENV_OFFSET	500
+#define CONFIG_ENV_OFFSET	64
+#define CONFIG_SYS_EEPROM_PAGE_WRITE_DELAY_MS 100
 #endif
 
 
@@ -209,7 +213,8 @@
 
 #define CONFIG_SPL_LDSCRIPT		"$(CPUDIR)/am33xx/u-boot-spl.lds"
 #endif
-
+#if 0
 #define CONFIG_ENV_IS_NOWHERE
+#endif
 
 #endif	/* ! __CONFIG_AM335X_EVM_H */
