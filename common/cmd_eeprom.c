@@ -245,9 +245,8 @@ int eeprom_write (unsigned dev_addr, unsigned offset, uchar *buffer, unsigned cn
 
 		maxlen = EEPROM_PAGE_SIZE - EEPROM_PAGE_OFFSET(blk_off);
 #else
-		maxlen = 32 - blk_off;
+		maxlen = 0x100 - blk_off;
 #endif
-		printf("maxlen = %d, len = %d", maxlen, len); 
 		if (maxlen > I2C_RXTX_LEN)
 			maxlen = I2C_RXTX_LEN;
 

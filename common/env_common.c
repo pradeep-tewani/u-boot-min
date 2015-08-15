@@ -197,8 +197,6 @@ int env_import(const char *buf, int check)
 		uint32_t crc;
 
 		memcpy(&crc, &ep->crc, sizeof(crc));
-		printf("CRC is %x\n", crc);
-		printf("CRC should be %x\n", crc32(0, ep->data, ENV_SIZE));
 
 		if (crc32(0, ep->data, ENV_SIZE) != crc) {
 			set_default_env("!bad CRC");
@@ -247,7 +245,6 @@ int env_export(env_t *env_out)
 		return ret;
 
 	env_out->crc = crc32(0, env_out->data, ENV_SIZE);
-	printf("CrC is %x\n", env_out->crc);
 
 	return 0;
 }

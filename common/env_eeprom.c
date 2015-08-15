@@ -35,7 +35,6 @@ static int eeprom_bus_read(unsigned dev_addr, unsigned offset,
 	if (old_bus != CONFIG_I2C_ENV_EEPROM_BUS)
 		i2c_set_bus_num(CONFIG_I2C_ENV_EEPROM_BUS);
 #endif
-	printf("Reading %d bytes from offset %d at eeprom %d\n", cnt, offset, dev_addr);
 	rcode = eeprom_read(dev_addr, offset, buffer, cnt);
 
 #if defined(CONFIG_I2C_ENV_EEPROM_BUS)
@@ -119,7 +118,6 @@ int saveenv(void)
 
 	env_new.flags = ACTIVE_FLAG;
 #endif
-	printf("Writing to %d Address, %d Size\n at %d offset\n", CONFIG_SYS_DEF_EEPROM_ADDR, CONFIG_ENV_SIZE, off);
 
 	rc = eeprom_bus_write(CONFIG_SYS_DEF_EEPROM_ADDR,
 			      off, (uchar *)&env_new, CONFIG_ENV_SIZE);
