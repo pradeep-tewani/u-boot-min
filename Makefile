@@ -617,6 +617,9 @@ libs-y += drivers/serial/
 libs-y += drivers/rtc/
 libs-y += drivers/i2c/
 libs-y += drivers/mmc/
+libs-y += drivers/power/ \
+	drivers/power/pmic/
+
 libs-y += common/
 libs-y += lib/libfdt/ 
 

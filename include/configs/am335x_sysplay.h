@@ -219,9 +219,16 @@
 #define CONFIG_SPL_MMC_SUPPORT
 #define CONFIG_SPL_FAT_SUPPORT
 
+/* PMIC support */
+#define CONFIG_POWER_TPS65217
+#define CONFIG_IS_NOWHERE
+
+
 /* SPL */
 #ifndef CONFIG_NOR_BOOT
 #define CONFIG_SPL_YMODEM_SUPPORT
+#define CONFIG_SPL_POWER_SUPPORT
+#define CONFIG_SPL_I2C_SUPPORT
 
 /* Bootcount using the RTC block */
 #define CONFIG_BOOTCOUNT_LIMIT

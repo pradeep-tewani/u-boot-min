@@ -95,12 +95,56 @@ const struct dpll_params dpll_ddr_bone_black = {
 
 void am33xx_spl_board_init(void)
 {
+	int usb_cur_lim;
+	int mpu_vdd;
+	if (i2c_probe(TPS65217_CHIP_PM))
+		return;
 	/*
 	 * Override what we have detected since we know if we have
 	 * a Beaglebone Black it supports 1GHz.
 	 */
 	dpll_mpu_opp100.m = MPUPLL_M_1000;
+	/*
+	 * Increase USB current limit to 1300mA or 1800mA and set
+	 * the MPU voltage controller as needed.
+	 */
+	usb_cur_lim = TPS65217_USB_INPUT_CUR_LIMIT_1800MA;
+	mpu_vdd = TPS65217_DCDC_VOLT_SEL_1325MV;
+	if (tps65217_reg_write(TPS65217_PROT_LEVEL_NONE,
+				TPS65217_POWER_PATH,
+				usb_cur_lim,
+				TPS65217_USB_INPUT_CUR_LIMIT_MASK))
+		puts("tps65217_reg_write failure\n");
 
+	/* Set DCDC3 (CORE) voltage to 1.125V */
+	if (tps65217_voltage_update(TPS65217_DEFDCDC3,
+				TPS65217_DCDC_VOLT_SEL_1125MV)) {
+		puts("tps65217_voltage_update failure\n");
+		return;
+	}
+
+	/* Set CORE Frequencies to OPP100 */
+	do_setup_dpll(&dpll_core_regs, &dpll_core_opp100);
+
+	/* Set DCDC2 (MPU) voltage */
+	if (tps65217_voltage_update(TPS65217_DEFDCDC2, mpu_vdd)) {
+		puts("tps65217_voltage_update failure\n");
+		return;
+	}
+	/*
+	 * Set LDO3, LDO4 output voltage to 3.3V for Beaglebone.
+	 * Set LDO3 to 1.8V and LDO4 to 3.3V for Beaglebone Black.
+	 */
+	if (tps65217_reg_write(TPS65217_PROT_LEVEL_2,
+				TPS65217_DEFLS1,
+				TPS65217_LDO_VOLTAGE_OUT_1_8,
+				TPS65217_LDO_MASK))
+		puts("tps65217_reg_write failure\n");
+	if (tps65217_reg_write(TPS65217_PROT_LEVEL_2,
+				TPS65217_DEFLS2,
+				TPS65217_LDO_VOLTAGE_OUT_3_3,
+				TPS65217_LDO_MASK))
+		puts("tps65217_reg_write failure\n");
 	/* Set MPU Frequency to what we detected now that voltages are set */
 	do_setup_dpll(&dpll_mpu_regs, &dpll_mpu_opp100);
 }

@@ -100,7 +100,7 @@ void spl_board_init(void)
 	hw_watchdog_init();
 #endif
 #ifdef CONFIG_AM33XX
-	//am33xx_spl_board_init();
+	am33xx_spl_board_init();
 #endif
 }
 
