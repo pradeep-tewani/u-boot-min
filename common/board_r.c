@@ -200,6 +200,45 @@ int initr_mmc(void)
 	return 0;
 }
 
+#ifdef CONFIG_CMD_NET
+static int initr_ethaddr(void)
+{
+	bd_t *bd = gd->bd;
+
+	/* kept around for legacy kernels only ... ignore the next section */
+	eth_getenv_enetaddr("ethaddr", bd->bi_enetaddr);
+#ifdef CONFIG_HAS_ETH1
+	eth_getenv_enetaddr("eth1addr", bd->bi_enet1addr);
+#endif
+#ifdef CONFIG_HAS_ETH2
+	eth_getenv_enetaddr("eth2addr", bd->bi_enet2addr);
+#endif
+#ifdef CONFIG_HAS_ETH3
+	eth_getenv_enetaddr("eth3addr", bd->bi_enet3addr);
+#endif
+#ifdef CONFIG_HAS_ETH4
+	eth_getenv_enetaddr("eth4addr", bd->bi_enet4addr);
+#endif
+#ifdef CONFIG_HAS_ETH5
+	eth_getenv_enetaddr("eth5addr", bd->bi_enet5addr);
+#endif
+	return 0;
+}
+#endif /* CONFIG_CMD_NET */
+
+
+#ifdef CONFIG_CMD_NET
+static int initr_net(void)
+{
+	puts("Net:   ");
+	eth_initialize(gd->bd);
+#if defined(CONFIG_RESET_PHY_R)
+	debug("Reset Ethernet PHY\n");
+	reset_phy();
+#endif
+	return 0;
+}
+#endif
 
 static int run_main_loop(void)
 {
@@ -247,7 +286,13 @@ init_fnc_t init_sequence_r[] = {
 	INIT_FUNC_WATCHDOG_RESET
 	interrupt_init,
 	initr_enable_interrupts,
-
+#ifdef CONFIG_CMD_NET
+	initr_ethaddr,
+#endif
+#ifdef CONFIG_CMD_NET
+	INIT_FUNC_WATCHDOG_RESET
+	initr_net,
+#endif
 	run_main_loop,
 };
 

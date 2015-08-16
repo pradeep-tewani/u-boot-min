@@ -230,6 +230,22 @@
 #define CONFIG_SPL_POWER_SUPPORT
 #define CONFIG_SPL_I2C_SUPPORT
 
+/* Network defines. */
+#define CONFIG_CMD_NET          /* 'bootp' and 'tftp' */
+#define CONFIG_CMD_DHCP
+#define CONFIG_CMD_MII
+#define CONFIG_BOOTP_DNS        /* Configurable parts of CMD_DHCP */
+#define CONFIG_BOOTP_DNS2
+#define CONFIG_BOOTP_SEND_HOSTNAME
+#define CONFIG_BOOTP_GATEWAY
+#define CONFIG_BOOTP_SUBNETMASK
+#define CONFIG_NET_RETRY_COUNT         10
+#define CONFIG_CMD_PING
+#define CONFIG_DRIVER_TI_CPSW       /* Driver for IP block */
+#define CONFIG_MII          /* Required in net/eth.c */
+#define CONFIG_PHY_SMSC
+#define CONFIG_PHYLIB
+
 /* Bootcount using the RTC block */
 #define CONFIG_BOOTCOUNT_LIMIT
 #define CONFIG_BOOTCOUNT_AM33XX
