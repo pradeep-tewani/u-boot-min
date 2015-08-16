@@ -193,6 +193,14 @@ static int initr_enable_interrupts(void)
 }
 #endif
 
+int initr_mmc(void)
+{
+	puts("MMC:   ");
+	mmc_initialize(gd->bd);
+	return 0;
+}
+
+
 static int run_main_loop(void)
 {
 	/* main_loop() can return to retry autoboot, if so just run it again */
@@ -230,6 +238,7 @@ init_fnc_t init_sequence_r[] = {
 	initr_serial,
 	initr_announce,
 	INIT_FUNC_WATCHDOG_RESET
+	initr_mmc,
 	initr_env,
 	INIT_FUNC_WATCHDOG_RESET
 	stdio_add_devices,

@@ -131,6 +131,7 @@ static void spl_ram_load_image(void)
 
 void board_init_r(gd_t *dummy1, ulong dummy2)
 {
+	u32 boot_device;
 	debug(">>spl:board_init_r()\n");
 
 #ifdef CONFIG_SYS_SPL_MALLOC_START
@@ -143,10 +144,30 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 	 * and enabled (decrementer) in interrupt_init() here.
 	 */
 	timer_init();
-
-#ifdef CONFIG_SPL_YMODEM_SUPPORT
-	spl_ymodem_load_image();
+#ifdef CONFIG_SPL_BOARD_INIT
+	spl_board_init();
 #endif
+
+	boot_device = spl_boot_device();
+	debug("boot device - %d\n", boot_device);
+	switch (boot_device) {
+#ifdef CONFIG_SPL_MMC_SUPPORT
+		case BOOT_DEVICE_MMC1:
+		case BOOT_DEVICE_MMC2:
+		case BOOT_DEVICE_MMC2_2:
+			spl_mmc_load_image();
+			break;
+#endif
+#ifdef CONFIG_SPL_YMODEM_SUPPORT
+		case BOOT_DEVICE_UART:
+			spl_ymodem_load_image();
+			break;
+#endif
+		default:
+			debug("SPL: Un-supported Boot Device\n");
+			hang();
+	}
+
 	jump_to_image_no_args(&spl_image);
 }
 
