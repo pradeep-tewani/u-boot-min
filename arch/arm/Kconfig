@@ -312,6 +312,9 @@ config TARGET_AM335X_EVM
 config TARGET_SYSPLAY
 	bool "Support am335x_sysplay"
 
+config TARGET_DEMO
+	bool "Support demo_board"
+
 config TARGET_AM43XX_EVM
 	bool "Support am43xx_evm"
 
@@ -530,5 +533,6 @@ config ARCH_UNIPHIER
 endchoice
 
 source "board/sysplay/am335x/Kconfig"
+source "board/demo/am335x/Kconfig"
 
 endmenu
