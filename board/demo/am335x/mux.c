@@ -103,6 +103,7 @@ void enable_i2c0_pin_mux(void)
 
 void enable_board_pin_mux()
 {
+	configure_module_pin_mux(i2c0_pin_mux);
 #if 0
 	/* Do board-specific muxes. */
 	/* Beaglebone LT pinmux */
