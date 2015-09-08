@@ -142,6 +142,16 @@ static int initr_announce(void)
 	return 0;
 }
 
+#ifdef CONFIG_GENERIC_MMC
+int initr_mmc(void)
+{
+	puts("MMC:   ");
+	mmc_initialize(gd->bd);
+	return 0;
+}
+#endif
+
+
 /*
  * Tell if it's OK to load the environment early in boot.
  *
@@ -230,6 +240,7 @@ init_fnc_t init_sequence_r[] = {
 	initr_serial,
 	initr_announce,
 	INIT_FUNC_WATCHDOG_RESET
+	initr_mmc,
 	initr_env,
 	INIT_FUNC_WATCHDOG_RESET
 	stdio_add_devices,

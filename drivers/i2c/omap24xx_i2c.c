@@ -156,7 +156,7 @@ static uint omap24_i2c_setspeed(uint speed)
 	return 0;
 }
 
-static void omap24_i2c_deblock()
+static void omap24_i2c_deblock(void)
 {
 	//struct i2c *i2c_base = omap24_get_base(adap);
 	int i;

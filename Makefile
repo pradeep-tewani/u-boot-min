@@ -609,8 +609,11 @@ libs-y += $(CPUDIR)/$(SOC)/
 endif
 libs-$(CONFIG_OF_EMBED) += dts/
 libs-y += arch/$(ARCH)/lib/
+libs-y += disk/
+libs-y += fs/
 libs-y += drivers/
 libs-y += drivers/i2c/
+libs-y += drivers/mmc/
 libs-y += drivers/gpio/
 libs-y += drivers/serial/
 libs-y += drivers/rtc/

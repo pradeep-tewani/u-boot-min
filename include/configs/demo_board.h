@@ -191,8 +191,43 @@
 #define CONFIG_SYS_I2C_EEPROM_ADDR 0x50
 #define CONFIG_SYS_DEF_EEPROM_ADDR 0x50
 
+/* MMC/SD IP block */
+#define CONFIG_MMC
+#define CONFIG_GENERIC_MMC
+#define CONFIG_OMAP_HSMMC
+#define CONFIG_CMD_MMC
+
+/*
+ *  * Common filesystems support.  When we have removable storage we
+ *   * enabled a number of useful commands and support.
+ *    */
+#if defined(CONFIG_MMC) || defined(CONFIG_USB_STORAGE)
+#define CONFIG_DOS_PARTITION
+#define CONFIG_CMD_FAT
+#define CONFIG_FAT_WRITE
+#define CONFIG_CMD_EXT2
+#define CONFIG_CMD_EXT4
+#define CONFIG_CMD_FS_GENERIC
+#endif
+
+/* FAT sd card locations. */
+#define CONFIG_SYS_MMC_SD_FAT_BOOT_PARTITION    1
+#define CONFIG_SPL_FAT_LOAD_PAYLOAD_NAME        "u-boot.img"
+
+#ifdef CONFIG_MMC
+#define CONFIG_SPL_LIBDISK_SUPPORT
+#define CONFIG_SPL_MMC_SUPPORT
+#define CONFIG_SPL_FAT_SUPPORT
+#endif
+
+/* RAW SD card / eMMC locations. */
+#define CONFIG_SYS_MMCSD_RAW_MODE_U_BOOT_SECTOR 0x300 /* address 0x60000 */
+#define CONFIG_SYS_U_BOOT_MAX_SIZE_SECTORS      0x200 /* 256 KB */
+
+
 
 /* SPL */
+
 #ifndef CONFIG_NOR_BOOT
 #define CONFIG_SPL_YMODEM_SUPPORT
 
